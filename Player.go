@@ -1,4 +1,4 @@
-package main
+package player
 
 import (
 	"bytes"
@@ -14,6 +14,7 @@ import (
 	"time"
 )
 
+// Plays a song file
 func Play(file string, vc *discordgo.VoiceConnection) error {
 	if strings.HasSuffix(file, ".dca") {
 		return streamToVC(file, vc)
@@ -26,7 +27,7 @@ func Play(file string, vc *discordgo.VoiceConnection) error {
 		// ffmpeg -i test.mp3 -f s16le -ar 48000 -ac 2 pipe:1 | dca > test.dca
 		var stdout bytes.Buffer
 		var stderr bytes.Buffer
-		cmd := exec.Command("ffmpeg", "-i", file, "-f", "s16le", "-ar", "48000", "-ac", "2", "pipe:1", "|", "dca", ">", dcaFilePath)
+		cmd := exec.Command("ffmpeg", "-i", file, "-f", "s16le", "-ar", "48000", "-ac", "2", "pipe:1", "|", "./dca", ">", dcaFilePath)
 		cmd.Stdout = &stdout
 		cmd.Stderr = &stderr
 		err := cmd.Run()
@@ -37,6 +38,7 @@ func Play(file string, vc *discordgo.VoiceConnection) error {
 	}
 }
 
+// Streams the audio to the voice channel
 func streamToVC(fileString string, vc *discordgo.VoiceConnection) error {
 	file, err := os.Open(fileString)
 	if err != nil {
