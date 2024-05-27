@@ -14,14 +14,14 @@ import (
 	"time"
 )
 
-func Play(file string, vc *discordgo.VoiceConnection) error {
+func Play(file string, vc *discordgo.VoiceConnection, disconnect bool) error {
 	if strings.HasSuffix(file, ".dca") {
 		return streamToVC(file, vc)
 	} else {
 		ext := filepath.Ext(file)
 		dcaFilePath := strings.ReplaceAll(file, ext, ".dca")
 		if _, err := os.Stat(dcaFilePath); err == nil {
-			return streamToVC(dcaFilePath, vc)
+			return streamToVC(dcaFilePath, vc, disconnect)
 		}
 		// ffmpeg -i test.mp3 -f s16le -ar 48000 -ac 2 pipe:1 | dca > test.dca
 		var stdout bytes.Buffer
@@ -34,12 +34,12 @@ func Play(file string, vc *discordgo.VoiceConnection) error {
 		if err != nil {
 			return err
 		}
-		return streamToVC(dcaFilePath, vc)
+		return streamToVC(dcaFilePath, vc, disconnect)
 	}
 }
 
 // Streams the audio to the voice channel
-func streamToVC(fileString string, vc *discordgo.VoiceConnection) error {
+func streamToVC(fileString string, vc *discordgo.VoiceConnection, disconnect bool) error {
 	file, err := os.Open(fileString)
 	if err != nil {
 		fmt.Println("Error opening dca file :", err)
@@ -83,9 +83,11 @@ func streamToVC(fileString string, vc *discordgo.VoiceConnection) error {
 		return err
 	}
 	time.Sleep(250 * time.Millisecond)
-	err = vc.Disconnect()
-	if err != nil {
-		return err
+	if (disconnect) {
+		err = vc.Disconnect()
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
