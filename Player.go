@@ -16,7 +16,7 @@ import (
 
 func Play(file string, vc *discordgo.VoiceConnection, disconnect bool) error {
 	if strings.HasSuffix(file, ".dca") {
-		return streamToVC(file, vc)
+		return streamToVC(file, vc, disconnect)
 	} else {
 		ext := filepath.Ext(file)
 		dcaFilePath := strings.ReplaceAll(file, ext, ".dca")
