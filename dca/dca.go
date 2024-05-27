@@ -5,7 +5,7 @@
 //
 // Usage: ffmpeg -i test.mp3 -f s16le -ar 48000 -ac 2 pipe:1 | dca > test.dca
 
-package main
+package playerDca
 
 import (
 	"bufio"
@@ -190,7 +190,7 @@ func init() {
 	MaxBytes = (AudioFrameSize * AudioChannels) * 2 // max size of opus data
 }
 
-func main() {
+func Main() {
 
 	//////////////////////////////////////////////////////////////////////////
 	// Basic validation
