@@ -90,6 +90,3 @@ func streamToVC(fileString string, vc *discordgo.VoiceConnection) error {
 
 	return nil
 }
-
-	return nil
-}
