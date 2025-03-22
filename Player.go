@@ -5,13 +5,14 @@ import (
 	"encoding/binary"
 	"errors"
 	"fmt"
-	"github.com/bwmarrin/discordgo"
 	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/bwmarrin/discordgo"
 )
 
 func Play(file string, vc *discordgo.VoiceConnection, disconnect bool) error {
@@ -26,7 +27,7 @@ func Play(file string, vc *discordgo.VoiceConnection, disconnect bool) error {
 		// ffmpeg -i test.mp3 -f s16le -ar 48000 -ac 2 pipe:1 | dca > test.dca
 		var stdout bytes.Buffer
 		var stderr bytes.Buffer
-		cmdString := "ffmpeg -i " + file + " -f s16le -ar 48000 -ac 2 pipe:1 | ./dca > " + dcaFilePath
+		cmdString := fmt.Sprintf("ffmpeg -i \"%s\" -f s16le -ar 48000 -ac 2 pipe:1 | ./dca > \"%s\"", file, dcaFilePath)
 		cmd := exec.Command("sh", "-c", cmdString)
 		cmd.Stdout = &stdout
 		cmd.Stderr = &stderr
@@ -83,7 +84,7 @@ func streamToVC(fileString string, vc *discordgo.VoiceConnection, disconnect boo
 		return err
 	}
 	time.Sleep(250 * time.Millisecond)
-	if (disconnect) {
+	if disconnect {
 		err = vc.Disconnect()
 		if err != nil {
 			return err
